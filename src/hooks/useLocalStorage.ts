@@ -12,7 +12,6 @@ export function useLocalStorage<T>(key: string, initial: T) {
     } catch {
       /* ignore */
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
   const set = useCallback(

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const runtime = "edge";
+
 export async function GET() {
   // Use txt (60% smaller) then map to array — demonstrates /removed/ endpoint
   try {

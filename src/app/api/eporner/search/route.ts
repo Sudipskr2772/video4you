@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { buildSearchUrl } from "@/lib/eporner";
 
+export const runtime = "edge";
+
 export async function GET(req: NextRequest) {
   const sp = req.nextUrl.searchParams;
   const url = buildSearchUrl({

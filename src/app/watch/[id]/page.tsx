@@ -5,6 +5,8 @@ import WatchView from "@/components/WatchView";
 import { getVideoById, searchVideos } from "@/lib/eporner";
 import { tagsOf } from "@/lib/format";
 
+export const runtime = "edge";
+
 export default async function WatchPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const video = await getVideoById(id, "big").catch(() => null);

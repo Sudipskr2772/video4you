@@ -1,12 +1,21 @@
 import AppShell from "@/components/AppShell";
 
+export const runtime = "edge";
+
 async function getStatus() {
+  // Query upstream directly (no self-HTTP — no absolute host on the edge)
   try {
-    const base =
-      process.env.NEXT_PUBLIC_BASE_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-    const r = await fetch(`${base}/api/eporner/removed`, { cache: "no-store" });
-    return await r.json();
+    const r = await fetch("https://www.eporner.com/api/v2/video/removed/?format=txt", {
+      headers: { "User-Agent": "Mozilla/5.0" },
+      cache: "no-store",
+    });
+    const txt = await r.text();
+    const ids = txt.split(/\s+/).map((s) => s.trim()).filter(Boolean);
+    return {
+      count: ids.length,
+      sample: ids.slice(0, 50),
+      updatedAt: new Date().toISOString(),
+    };
   } catch (e) {
     return { error: String(e) };
   }
@@ -26,7 +35,9 @@ export default async function StatusPage() {
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
           <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">Removed IDs</p>
           <p className="mt-1 text-2xl font-extrabold text-white">
-            {typeof data?.count === "number" ? data.count.toLocaleString() : "—"}
+            {typeof (data as { count?: number })?.count === "number"
+              ? (data as { count: number }).count.toLocaleString()
+              : "—"}
           </p>
         </div>
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -35,16 +46,18 @@ export default async function StatusPage() {
         </div>
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
           <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">Updated</p>
-          <p className="mt-1 text-sm font-semibold text-zinc-200">{data?.updatedAt || "—"}</p>
+          <p className="mt-1 text-sm font-semibold text-zinc-200">
+            {(data as { updatedAt?: string })?.updatedAt || "—"}
+          </p>
         </div>
       </div>
-      {Array.isArray(data?.sample) && (
+      {Array.isArray((data as { sample?: string[] })?.sample) && (
         <div className="mt-4 rounded-2xl border border-white/10 bg-black/40 p-4">
           <p className="mb-2 text-xs font-bold uppercase tracking-wider text-zinc-500">
             Sample removed IDs
           </p>
           <div className="flex flex-wrap gap-1.5">
-            {data.sample.slice(0, 30).map((id: string) => (
+            {(data as { sample: string[] }).sample.slice(0, 30).map((id: string) => (
               <code key={id} className="rounded-md bg-white/5 px-2 py-1 text-[11px] text-zinc-400">
                 {id}
               </code>

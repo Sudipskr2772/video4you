@@ -5,6 +5,8 @@ import VideoGrid from "@/components/VideoGrid";
 import { searchVideos, type OrderParam } from "@/lib/eporner";
 import { ORDERS } from "@/lib/constants";
 
+export const runtime = "edge";
+
 interface SP {
   q?: string;
   order?: string;

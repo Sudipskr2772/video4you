@@ -80,6 +80,8 @@ export default function WatchView({
             </p>
             <div className="thumb-strip -mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
               {video.thumbs.slice(0, 15).map((t) => (
+                // plain img is deliberate here: 15 tiny fixed-size preview frames
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   key={t.src}
                   src={t.src}
